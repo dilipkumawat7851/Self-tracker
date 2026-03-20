@@ -1,0 +1,3 @@
+Git initialized: True
+Remotes: origin	https://github.com/dilipkumawat7851/Self-tracker.git (fetch) origin	https://github.com/dilipkumawat7851/Self-tracker.git (push)
+Add remote: 
