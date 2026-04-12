@@ -1,0 +1,81 @@
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1967ms
+ ○ Compiling / ...
+ ⨯ ./src/components/Providers.tsx:3:1
+Module not found: Can't resolve 'next-auth/react'
+[0m [90m 1 |[39m [32m"use client"[39m[33m;[39m[0m
+[0m [90m 2 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mSessionProvider[39m } [36mfrom[39m [32m"next-auth/react"[39m[33m;[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 4 |[39m[0m
+[0m [90m 5 |[39m [36mexport[39m [36mfunction[39m [33mProviders[39m({ children }[33m:[39m { children[33m:[39m [33mReact[39m[33m.[39m[33mReactNode[39m }) {[0m
+[0m [90m 6 |[39m   [36mreturn[39m [33m<[39m[33mSessionProvider[39m[33m>[39m{children}[33m<[39m[33m/[39m[33mSessionProvider[39m[33m>[39m[33m;[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+ ⨯ ./src/components/Providers.tsx:3:1
+Module not found: Can't resolve 'next-auth/react'
+[0m [90m 1 |[39m [32m"use client"[39m[33m;[39m[0m
+[0m [90m 2 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mSessionProvider[39m } [36mfrom[39m [32m"next-auth/react"[39m[33m;[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 4 |[39m[0m
+[0m [90m 5 |[39m [36mexport[39m [36mfunction[39m [33mProviders[39m({ children }[33m:[39m { children[33m:[39m [33mReact[39m[33m.[39m[33mReactNode[39m }) {[0m
+[0m [90m 6 |[39m   [36mreturn[39m [33m<[39m[33mSessionProvider[39m[33m>[39m{children}[33m<[39m[33m/[39m[33mSessionProvider[39m[33m>[39m[33m;[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+ ⨯ ./src/components/Providers.tsx:3:1
+Module not found: Can't resolve 'next-auth/react'
+[0m [90m 1 |[39m [32m"use client"[39m[33m;[39m[0m
+[0m [90m 2 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mSessionProvider[39m } [36mfrom[39m [32m"next-auth/react"[39m[33m;[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 4 |[39m[0m
+[0m [90m 5 |[39m [36mexport[39m [36mfunction[39m [33mProviders[39m({ children }[33m:[39m { children[33m:[39m [33mReact[39m[33m.[39m[33mReactNode[39m }) {[0m
+[0m [90m 6 |[39m   [36mreturn[39m [33m<[39m[33mSessionProvider[39m[33m>[39m{children}[33m<[39m[33m/[39m[33mSessionProvider[39m[33m>[39m[33m;[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+ ✓ Compiled /_error in 560ms (1514 modules)
+ GET / 200 in 200ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ⨯ ./src/app/api/auth/[...nextauth]/route.ts:3:1
+Module not found: Can't resolve 'bcryptjs'
+[0m [90m 1 |[39m [36mimport[39m [33mNextAuth[39m[33m,[39m { [33mNextAuthOptions[39m } [36mfrom[39m [32m"next-auth"[39m[33m;[39m[0m
+[0m [90m 2 |[39m [36mimport[39m [33mCredentialsProvider[39m [36mfrom[39m [32m"next-auth/providers/credentials"[39m[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m bcrypt [36mfrom[39m [32m"bcryptjs"[39m[33m;[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 4 |[39m [36mimport[39m dbConnect [36mfrom[39m [32m"@/lib/mongodb"[39m[33m;[39m[0m
+[0m [90m 5 |[39m [36mimport[39m { [33mUser[39m } [36mfrom[39m [32m"@/models/User"[39m[33m;[39m[0m
+[0m [90m 6 |[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+ ⨯ ./src/app/api/auth/[...nextauth]/route.ts:3:1
+Module not found: Can't resolve 'bcryptjs'
+[0m [90m 1 |[39m [36mimport[39m [33mNextAuth[39m[33m,[39m { [33mNextAuthOptions[39m } [36mfrom[39m [32m"next-auth"[39m[33m;[39m[0m
+[0m [90m 2 |[39m [36mimport[39m [33mCredentialsProvider[39m [36mfrom[39m [32m"next-auth/providers/credentials"[39m[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m bcrypt [36mfrom[39m [32m"bcryptjs"[39m[33m;[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 4 |[39m [36mimport[39m dbConnect [36mfrom[39m [32m"@/lib/mongodb"[39m[33m;[39m[0m
+[0m [90m 5 |[39m [36mimport[39m { [33mUser[39m } [36mfrom[39m [32m"@/models/User"[39m[33m;[39m[0m
+[0m [90m 6 |[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+ ⨯ ./src/app/api/auth/[...nextauth]/route.ts:3:1
+Module not found: Can't resolve 'bcryptjs'
+[0m [90m 1 |[39m [36mimport[39m [33mNextAuth[39m[33m,[39m { [33mNextAuthOptions[39m } [36mfrom[39m [32m"next-auth"[39m[33m;[39m[0m
+[0m [90m 2 |[39m [36mimport[39m [33mCredentialsProvider[39m [36mfrom[39m [32m"next-auth/providers/credentials"[39m[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m bcrypt [36mfrom[39m [32m"bcryptjs"[39m[33m;[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 4 |[39m [36mimport[39m dbConnect [36mfrom[39m [32m"@/lib/mongodb"[39m[33m;[39m[0m
+[0m [90m 5 |[39m [36mimport[39m { [33mUser[39m } [36mfrom[39m [32m"@/models/User"[39m[33m;[39m[0m
+[0m [90m 6 |[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+ GET /api/auth/session 500 in 1288ms
+ GET /api/auth/session 500 in 12ms
+ POST /api/auth/_log 500 in 14ms
+ POST /api/auth/_log 500 in 10ms
+ ✓ Compiled /_error in 467ms (1753 modules)

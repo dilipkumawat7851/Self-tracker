@@ -9,12 +9,34 @@
    ============================================================ */
 
 @layer base {
+  /* Light mode defaults */
   :root {
     --color-brand: 139, 92, 246;
     --color-accent: 16, 185, 129;
     --color-warning: 245, 158, 11;
     --color-danger: 239, 68, 68;
+    --surface-50: 255 255 255;
+    --surface-100: 244 244 245;
+    --surface-200: 228 228 231;
+    --surface-700: 63 63 70;
+    --surface-800: 39 39 42;
+    --surface-850: 31 31 35;
+    --surface-900: 24 24 27;
+    --surface-950: 250 250 250;
     --radius: 0.75rem;
+    color-scheme: light;
+  }
+
+  /* Dark mode overrides */
+  .dark {
+    --surface-50: 250 250 250;
+    --surface-100: 244 244 245;
+    --surface-200: 228 228 231;
+    --surface-700: 63 63 70;
+    --surface-800: 39 39 42;
+    --surface-850: 31 31 35;
+    --surface-900: 24 24 27;
+    --surface-950: 9 9 11;
     color-scheme: dark;
   }
 
@@ -27,7 +49,11 @@
   }
 
   body {
-    @apply bg-surface-950 text-white font-sans antialiased;
+    @apply bg-surface-950 text-zinc-900 font-sans antialiased transition-colors duration-300;
+  }
+
+  .dark body {
+    @apply text-surface-50;
     background-image:
       radial-gradient(ellipse 80% 60% at 50% -20%, rgba(var(--color-brand), 0.12), transparent),
       radial-gradient(ellipse 60% 40% at 80% 0%, rgba(6, 182, 212, 0.06), transparent);
@@ -48,14 +74,15 @@
     @apply bg-surface-700 rounded-full;
   }
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-surface-200/30;
+    background-color: rgba(var(--surface-200), 0.3);
   }
 }
 
 @layer components {
   /* ---- Glass Card ---- */
   .glass-card {
-    @apply bg-surface-900/60 backdrop-blur-xl border border-white/[0.06] rounded-2xl;
+    @apply backdrop-blur-xl border border-white/[0.06] rounded-2xl;
+    background-color: rgba(var(--surface-900), 0.6);
     box-shadow:
       0 0 0 1px rgba(255,255,255,0.03) inset,
       0 8px 32px rgba(0,0,0,0.25);
@@ -74,7 +101,7 @@
 
   /* ---- Buttons ---- */
   .btn-primary {
-    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold text-white rounded-xl overflow-hidden transition-all duration-300;
+    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold text-[#ffffff] rounded-xl overflow-hidden transition-all duration-300;
     background: linear-gradient(135deg, #8b5cf6, #7c3aed);
   }
   .btn-primary:hover {
@@ -91,7 +118,7 @@
   }
 
   .btn-accent {
-    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold text-white rounded-xl overflow-hidden transition-all duration-300;
+    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold text-[#ffffff] rounded-xl overflow-hidden transition-all duration-300;
     background: linear-gradient(135deg, #10b981, #059669);
   }
   .btn-accent:hover {
@@ -100,14 +127,19 @@
     box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
   }
 
-  /* ---- Input Fields ---- */
   .input-field {
-    @apply w-full px-4 py-3 bg-surface-900/80 border border-white/[0.06] rounded-xl text-white placeholder:text-surface-200/40 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500/40 transition-all duration-200;
+    @apply w-full px-4 py-3 border border-white/[0.06] rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500/40 transition-all duration-200;
+    background-color: rgba(var(--surface-900), 0.8);
+    color: rgba(var(--surface-200), 0.4); /* placeholder color approx */
+  }
+  .input-field::placeholder {
+    color: rgba(var(--surface-200), 0.4);
   }
 
   /* ---- Navigation ---- */
   .nav-link {
-    @apply flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-surface-200/60 rounded-xl transition-all duration-200;
+    @apply flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200;
+    color: rgba(var(--surface-200), 0.6);
   }
   .nav-link:hover {
     @apply text-white bg-white/[0.04];

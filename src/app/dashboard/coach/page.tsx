@@ -1,24 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
+import { useState, useRef, useEffect, FormEvent } from "react";
 
-interface Message {
+interface ChatMessage {
   id: string;
-  role: "user" | "ai";
+  role: "user" | "assistant";
   content: string;
-  timestamp: Date;
 }
-
-const initialMessages: Message[] = [
-  {
-    id: "1",
-    role: "ai",
-    content:
-      "Hey Dilip! 👋 I'm your AI habit coach. I've been analyzing your habit data. Your meditation streak is impressive at 12 days! I noticed your workout completion dips on weekends — would you like some strategies to stay consistent?",
-    timestamp: new Date(Date.now() - 60000),
-  },
-];
 
 const quickPrompts = [
   "Analyze my streaks",
@@ -28,50 +17,99 @@ const quickPrompts = [
 ];
 
 export default function CoachPage() {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: "1",
+      role: "assistant",
+      content:
+        "Hey! 👋 I'm your AI habit coach. I'm here to analyze your streaks, provide motivation, and help you build a better routine. What would you like to focus on today?",
+    },
+  ]);
   const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const aiResponses: Record<string, string> = {
-    "analyze my streaks":
-      "📊 **Streak Analysis:**\n\n🧘 Meditation: 12 days (trending ↑)\n📚 Reading: 8 days (steady)\n💪 Workout: 5 days (needs attention on weekends)\n✍️ Journal: 20 days — your longest! 🌟\n💧 Water: 15 days (great consistency)\n\nYour journal habit is your strongest — consider anchoring weaker habits to it. Try journaling right after your workout to create a chain.",
-    "give me motivation":
-      "🔥 **You're doing amazing, Dilip!**\n\nYou've completed over 1,450 XP worth of habits. That's not luck — that's discipline. Remember:\n\n> \"We are what we repeatedly do. Excellence, then, is not an act, but a habit.\" — Aristotle\n\nYou're only 4 days away from the 'Consistency King' achievement. Don't break the chain! 💪",
-    "suggest a new habit":
-      "Based on your current habits, here are 3 suggestions:\n\n1. 🌅 **Wake up at 6 AM** — Complements your meditation\n2. 🥗 **Healthy meal prep** — Pairs well with your hydration habit\n3. 📝 **Review goals weekly** — Reflect on your progress every Sunday\n\nWant me to help you set one up?",
-    "how to improve?":
-      "Here's a personalized improvement plan:\n\n1. **Chain habits together** — Do meditation → journaling → reading as a morning block\n2. **Set weekend minimums** — Reduce workout target to 20 min on weekends\n3. **Use the 2-minute rule** — Start with just 2 minutes when you feel resistance\n4. **Track your energy** — Note when you feel most productive and schedule hard habits there\n\nYour consistency is already top-tier. These small tweaks can push you to the next level! 🚀",
-  };
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
 
-  const handleSend = (text?: string) => {
-    const msg = (text || input).trim();
-    if (!msg) return;
+  const sendMessage = async (content: string) => {
+    if (!content.trim() || isLoading) return;
 
-    const userMessage: Message = {
+    const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: "user",
-      content: msg,
-      timestamp: new Date(),
+      content: content.trim(),
     };
-    setMessages((prev) => [...prev, userMessage]);
+
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setInput("");
-    setIsTyping(true);
+    setIsLoading(true);
 
-    setTimeout(() => {
-      const key = msg.toLowerCase();
-      const response =
-        aiResponses[key] ||
-        `Great question! Based on your habit data, I can see you're making solid progress. Here are some thoughts:\n\n✅ Your strongest area is consistency in journaling and water intake\n📈 There's room for growth in your workout and DSA practice\n💡 Try habit stacking: attach a new behavior to an existing one\n\nWould you like me to create a specific plan for "${msg}"?`;
+    try {
+      const res = await fetch("/api/coach", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: updatedMessages.map((m) => ({
+            role: m.role,
+            content: m.content,
+          })),
+        }),
+      });
 
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "ai",
-        content: response,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, aiMessage]);
-      setIsTyping(false);
-    }, 1500);
+      if (!res.ok) {
+        throw new Error("Coach request failed");
+      }
+
+      const reader = res.body?.getReader();
+      const decoder = new TextDecoder();
+
+      const assistantId = (Date.now() + 1).toString();
+      setMessages((prev) => [
+        ...prev,
+        { id: assistantId, role: "assistant", content: "" },
+      ]);
+
+      if (reader) {
+        let done = false;
+        while (!done) {
+          const { value, done: readerDone } = await reader.read();
+          done = readerDone;
+          if (value) {
+            const chunk = decoder.decode(value, { stream: true });
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === assistantId
+                  ? { ...m, content: m.content + chunk }
+                  : m
+              )
+            );
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Coach error:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 2).toString(),
+          role: "assistant",
+          content:
+            "Sorry, I'm having trouble connecting right now. Please try again! 🔄",
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    sendMessage(input);
   };
 
   return (
@@ -83,20 +121,27 @@ export default function CoachPage() {
         </div>
         <div>
           <h1 className="text-xl font-bold font-display">AI Coach</h1>
-          <p className="text-xs text-surface-200/40">Powered by AI · Personalized insights</p>
+          <p className="text-xs text-surface-200/40">
+            Powered by AI · Personalized insights
+          </p>
         </div>
         <span className="ml-auto badge-accent text-xs">Online</span>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+      <div
+        className="flex-1 overflow-y-auto space-y-4 pr-2"
+        ref={scrollRef}
+      >
         {messages.map((msg, i) => (
           <motion.div
             key={msg.id}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05, duration: 0.3 }}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+            className={`flex ${
+              msg.role === "user" ? "justify-end" : "justify-start"
+            }`}
           >
             <div
               className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed whitespace-pre-line ${
@@ -110,7 +155,7 @@ export default function CoachPage() {
           </motion.div>
         ))}
 
-        {isTyping && (
+        {isLoading && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -132,8 +177,9 @@ export default function CoachPage() {
         {quickPrompts.map((prompt) => (
           <button
             key={prompt}
-            onClick={() => handleSend(prompt)}
-            className="text-xs px-3.5 py-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] text-surface-200/60 hover:bg-white/[0.06] hover:text-white transition-all"
+            onClick={() => sendMessage(prompt)}
+            disabled={isLoading}
+            className="text-xs px-3.5 py-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] text-surface-200/60 hover:bg-white/[0.06] hover:text-white transition-all disabled:opacity-40"
           >
             {prompt}
           </button>
@@ -141,18 +187,21 @@ export default function CoachPage() {
       </div>
 
       {/* Input */}
-      <div className="flex gap-3">
+      <form onSubmit={handleSubmit} className="flex gap-3">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder="Ask your AI coach anything..."
           className="input-field flex-1"
         />
-        <button onClick={() => handleSend()} className="btn-primary px-5">
+        <button
+          type="submit"
+          disabled={isLoading || !input.trim()}
+          className="btn-primary px-5"
+        >
           Send
         </button>
-      </div>
+      </form>
     </div>
   );
 }

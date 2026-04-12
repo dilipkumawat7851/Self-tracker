@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import confetti from "canvas-confetti";
 import HabitCard from "@/components/habits/HabitCard";
-import { mockHabits } from "@/lib/mock-data";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -16,51 +16,72 @@ const stagger = {
 };
 
 export default function HabitsPage() {
-  const [habits, setHabits] = useState(mockHabits);
+  const [habits, setHabits] = useState<any[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [newName, setNewName] = useState("");
   const [newDesc, setNewDesc] = useState("");
   const [newIcon, setNewIcon] = useState("🎯");
   const [newColor, setNewColor] = useState("#8b5cf6");
+  const [loading, setLoading] = useState(true);
 
-  const handleComplete = (id: string) => {
-    setHabits((prev) =>
-      prev.map((h) =>
-        h.id === id
-          ? { ...h, completedToday: !h.completedToday, streak: h.completedToday ? h.streak - 1 : h.streak + 1 }
-          : h
-      )
-    );
+  useEffect(() => {
+    fetch("/api/habits")
+      .then((res) => res.json())
+      .then((data) => {
+        setHabits(Array.isArray(data) ? data : []);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleComplete = async (id: string) => {
+    const res = await fetch(`/api/habits/${id}/complete`, { method: "POST" });
+    if (res.ok) {
+      const data = await res.json();
+      setHabits((prev) =>
+        prev.map((h) =>
+          h.id === id ? { ...h, completedToday: data.completedToday, streak: data.streak } : h
+        )
+      );
+      if (data.completedToday) {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#8b5cf6', '#10b981', '#06b6d4']
+        });
+      }
+    }
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!newName.trim()) return;
-    setHabits((prev) => [
-      ...prev,
-      {
-        id: Date.now().toString(),
-        userId: "user1",
+    const res = await fetch("/api/habits", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         name: newName,
         description: newDesc,
         icon: newIcon,
         color: newColor,
-        frequency: "daily" as const,
+        frequency: "daily",
         targetDays: 7,
-        streak: 0,
-        longestStreak: 0,
-        isActive: true,
-        completedToday: false,
-        createdAt: new Date(),
-      },
-    ]);
-    setNewName("");
-    setNewDesc("");
-    setNewIcon("🎯");
-    setShowForm(false);
+      }),
+    });
+    if (res.ok) {
+      const newHabit = await res.json();
+      setHabits((prev) => [newHabit, ...prev]);
+      setNewName("");
+      setNewDesc("");
+      setNewIcon("🎯");
+      setShowForm(false);
+    }
   };
 
-  const handleDelete = (id: string) => {
-    setHabits((prev) => prev.filter((h) => h.id !== id));
+  const handleDelete = async (id: string) => {
+    const res = await fetch(`/api/habits/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setHabits((prev) => prev.filter((h) => h.id !== id));
+    }
   };
 
   const icons = ["🎯", "💪", "📚", "🧘", "💻", "✍️", "💧", "🏃", "🎨", "🎵", "🌱", "🧠"];

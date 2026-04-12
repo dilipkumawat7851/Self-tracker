@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,13 +13,64 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      router.push("/dashboard");
-    }, 1000);
+    setError("");
+
+    if (isLogin) {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+
+      if (res?.error) {
+        if (res.error.includes("Database temporarily unavailable")) {
+          setError("Database is temporarily unavailable. Please try Google sign-in instead.");
+        } else {
+          setError("Invalid email or password");
+        }
+        setLoading(false);
+      } else {
+        router.push("/dashboard");
+      }
+    } else {
+      try {
+        const res = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.offline) {
+            // In offline mode, credentials won't work. Show message.
+            setError("Account created in offline mode. The database is temporarily unavailable. Please sign in with Google or wait for the database to come back online.");
+            setLoading(false);
+            return;
+          }
+          const signInRes = await signIn("credentials", { redirect: false, email, password });
+          if (signInRes?.ok) {
+            router.push("/dashboard");
+          } else {
+            setError("Account created! Please sign in.");
+            setIsLogin(true);
+            setLoading(false);
+          }
+        } else {
+          const data = await res.json();
+          setError(data.message || "Registration failed");
+          setLoading(false);
+        }
+      } catch (err) {
+        setError("Something went wrong");
+        setLoading(false);
+      }
+    }
   };
 
   return (
@@ -65,6 +117,11 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-sm p-3 rounded-lg">
+              {error}
+            </div>
+          )}
           {!isLogin && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
@@ -140,7 +197,12 @@ export default function LoginPage() {
         </div>
 
         {/* Google Button */}
-        <button className="btn-ghost w-full py-3 text-sm">
+        <button 
+          type="button"
+          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+          disabled={loading}
+          className="btn-ghost w-full py-3 text-sm flex items-center justify-center gap-2"
+        >
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"

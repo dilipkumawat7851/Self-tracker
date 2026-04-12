@@ -1,0 +1,1 @@
+const { OpenAI } = require('openai'); const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY }); openai.chat.completions.create({ model: 'gpt-4o-mini', messages: [{role: 'user', content: 'hello'}] }).then(c => console.log('SUCCESS')).catch(e => console.error(e));

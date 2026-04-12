@@ -1,0 +1,56 @@
+
+[GET /api/habits] Started
+[GET /api/habits] Session: {"name":"jhxfgiur","email":"test@growtgdjjhgrdryhmind.com","id":"69c01e65a3bc15b3e0d93bf4"}
+[GET /api/habits] Connecting DB...
+[GET /api/habits] CAUGHT ERROR: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+
+[GET /api/habits] Started
+[GET /api/habits] Session: {"name":"jhxfgiur","email":"test@growtgdjjhgrdryhmind.com","id":"69c01e65a3bc15b3e0d93bf4"}
+[GET /api/habits] Connecting DB...
+[GET /api/habits] CAUGHT ERROR: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+
+[GET /api/habits] Started
+[GET /api/habits] Session: {"name":"jhxfgiur","email":"test@growtgdjjhgrdryhmind.com","id":"69c01e65a3bc15b3e0d93bf4"}
+[GET /api/habits] Connecting DB...
+[GET /api/habits] CAUGHT ERROR: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+
+[GET /api/habits] Started
+[GET /api/habits] Session: {"name":"jhxfgiur","email":"test@growtgdjjhgrdryhmind.com","id":"69c01e65a3bc15b3e0d93bf4"}
+[GET /api/habits] Connecting DB...
+[GET /api/habits] CAUGHT ERROR: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+
+[GET /api/habits] Started
+[GET /api/habits] Session: {"name":"jhxfgiur","email":"test@growtgdjjhgrdryhmind.com","id":"69c01e65a3bc15b3e0d93bf4"}
+[GET /api/habits] Connecting DB...
+[GET /api/habits] CAUGHT ERROR: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+
+[GET /api/habits] Started
+[GET /api/habits] Session: {"name":"jhxfgiur","email":"test@growtgdjjhgrdryhmind.com","id":"69c01e65a3bc15b3e0d93bf4"}
+[GET /api/habits] Connecting DB...
+[GET /api/habits] CAUGHT ERROR: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+
+[GET /api/habits] Started
+[GET /api/habits] Session: {"name":"jhxfgiur","email":"test@growtgdjjhgrdryhmind.com","id":"69c01e65a3bc15b3e0d93bf4"}
+[GET /api/habits] Connecting DB...
+[GET /api/habits] CAUGHT ERROR: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+
+[GET /api/habits] Started
+[GET /api/habits] Session: {"name":"jhxfgiur","email":"test@growtgdjjhgrdryhmind.com","id":"69c01e65a3bc15b3e0d93bf4"}
+[GET /api/habits] Connecting DB...
+[GET /api/habits] CAUGHT ERROR: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.k3m2kom.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)

@@ -1,0 +1,8 @@
+﻿src/app/api/habits/[id]/route.ts(3,10): error TS2459: Module '"../../auth/[...nextauth]/route"' declares 'authOptions' locally, but it is not exported.
+src/app/dashboard/coach/page.tsx(4,19): error TS2724: '"@ai-sdk/react"' has no exported member named 'Message'. Did you mean 'UIMessage'?
+src/app/dashboard/coach/page.tsx(15,21): error TS2339: Property 'input' does not exist on type 'UseChatHelpers<UIMessage<unknown, UIDataTypes, UITools>>'.
+src/app/dashboard/coach/page.tsx(15,28): error TS2339: Property 'handleInputChange' does not exist on type 'UseChatHelpers<UIMessage<unknown, UIDataTypes, UITools>>'.
+src/app/dashboard/coach/page.tsx(15,47): error TS2339: Property 'handleSubmit' does not exist on type 'UseChatHelpers<UIMessage<unknown, UIDataTypes, UITools>>'.
+src/app/dashboard/coach/page.tsx(15,61): error TS2339: Property 'append' does not exist on type 'UseChatHelpers<UIMessage<unknown, UIDataTypes, UITools>>'.
+src/app/dashboard/coach/page.tsx(15,69): error TS2339: Property 'isLoading' does not exist on type 'UseChatHelpers<UIMessage<unknown, UIDataTypes, UITools>>'.
+src/app/dashboard/coach/page.tsx(16,5): error TS2353: Object literal may only specify known properties, and 'api' does not exist in type 'UseChatOptions<UIMessage<unknown, UIDataTypes, UITools>>'.

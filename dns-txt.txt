@@ -1,0 +1,1 @@
+SUCCESS: [["authSource=admin&replicaSet=atlas-tb00ni-shard-0"]]

@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
+import confetti from "canvas-confetti";
 import HabitCard from "@/components/habits/HabitCard";
 import ProgressRing from "@/components/ui/ProgressRing";
 import WeeklyChart from "@/components/analytics/WeeklyChart";
 import AIInsightPanel from "@/components/dashboard/AIInsightPanel";
-import { mockHabits, mockWeeklyStats, mockInsights } from "@/lib/mock-data";
+import MotivationBanner from "@/components/dashboard/MotivationBanner";
+import { mockWeeklyStats, mockInsights } from "@/lib/mock-data";
 
 const stagger = {
   hidden: {},
@@ -19,21 +22,49 @@ const fadeUp = {
 };
 
 export default function DashboardPage() {
-  const [habits, setHabits] = useState(mockHabits);
+  const { data: session } = useSession();
+  const userName = session?.user?.name?.split(" ")[0] || "Friend";
+
+  const [habits, setHabits] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/habits")
+      .then((res) => res.json())
+      .then((data) => {
+        setHabits(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
 
   const totalToday = habits.length;
   const completedToday = habits.filter((h) => h.completedToday).length;
+  const pendingHabits = totalToday - completedToday;
   const pct = totalToday > 0 ? Math.round((completedToday / totalToday) * 100) : 0;
-  const bestStreak = Math.max(...habits.map((h) => h.streak));
+  const bestStreak = habits.length > 0 ? Math.max(...habits.map((h) => h.streak)) : 0;
 
-  const handleComplete = (id: string) => {
-    setHabits((prev) =>
-      prev.map((h) =>
-        h.id === id
-          ? { ...h, completedToday: !h.completedToday, streak: h.completedToday ? h.streak - 1 : h.streak + 1 }
-          : h
-      )
-    );
+  const handleComplete = async (id: string) => {
+    const res = await fetch(`/api/habits/${id}/complete`, { method: "POST" });
+    if (res.ok) {
+      const data = await res.json();
+      setHabits((prev) =>
+        prev.map((h) =>
+          h.id === id ? { ...h, completedToday: data.completedToday, streak: data.streak } : h
+        )
+      );
+      if (data.completedToday) {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#8b5cf6', '#10b981', '#06b6d4']
+        });
+      }
+    }
   };
 
   return (
@@ -43,6 +74,8 @@ export default function DashboardPage() {
       variants={stagger}
       className="space-y-8 max-w-7xl"
     >
+      <MotivationBanner pendingHabitsCount={pendingHabits} userName={userName} />
+
       {/* ── Stats Row ── */}
       <motion.div variants={fadeUp} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[

@@ -10,6 +10,7 @@ const navItems = [
   { href: "/dashboard/habits", label: "My Habits", icon: "🎯" },
   { href: "/dashboard/analytics", label: "Analytics", icon: "📈" },
   { href: "/dashboard/coach", label: "AI Coach", icon: "🤖" },
+  { href: "/dashboard/timer", label: "Focus Timer", icon: "⏱️" },
   { href: "/dashboard/achievements", label: "Achievements", icon: "🏆" },
   { href: "/dashboard/settings", label: "Settings", icon: "⚙️" },
 ];
