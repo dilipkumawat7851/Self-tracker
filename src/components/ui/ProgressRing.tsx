@@ -13,30 +13,32 @@ interface ProgressRingProps {
 
 export default function ProgressRing({
   value,
-  size = 120,
-  strokeWidth = 8,
-  color = "#8b5cf6",
+  size = 72,
+  strokeWidth = 6,
+  color = "#4F6AF6",
   label,
   sublabel,
 }: ProgressRingProps) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (value / 100) * circumference;
+  const clampedValue = Math.min(100, Math.max(0, value));
+  const offset = circumference - (clampedValue / 100) * circumference;
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center select-none">
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} className="-rotate-90">
-          {/* Background ring */}
+          {/* Track */}
           <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="rgba(255,255,255,0.04)"
+            stroke="currentColor"
+            className="text-brand-100 dark:text-white/10"
             strokeWidth={strokeWidth}
           />
-          {/* Progress ring */}
+          {/* Progress Arc */}
           <motion.circle
             cx={size / 2}
             cy={size / 2}
@@ -49,23 +51,22 @@ export default function ProgressRing({
             initial={{ strokeDashoffset: circumference }}
             animate={{ strokeDashoffset: offset }}
             transition={{ duration: 1.2, ease: "easeOut" }}
-            style={{ filter: `drop-shadow(0 0 6px ${color}40)` }}
+            style={{
+              filter: `drop-shadow(0 0 4px ${color}44)`,
+            }}
           />
         </svg>
-        {/* Center text */}
+
+        {/* Center Percentage */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <motion.span
-            className="text-2xl font-bold font-display"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.4 }}
-          >
-            {Math.round(value)}%
-          </motion.span>
+          <span className="text-xs font-bold text-text-primary">
+            {Math.round(clampedValue)}%
+          </span>
         </div>
       </div>
-      {label && <p className="text-sm font-medium mt-3">{label}</p>}
-      {sublabel && <p className="text-xs text-surface-200/40 mt-0.5">{sublabel}</p>}
+
+      {label && <p className="text-xs font-medium text-text-primary mt-2">{label}</p>}
+      {sublabel && <p className="text-[11px] text-text-muted mt-0.5">{sublabel}</p>}
     </div>
   );
 }

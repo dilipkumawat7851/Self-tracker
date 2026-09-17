@@ -2,13 +2,35 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Play, Pause, RotateCcw, SkipForward, Timer, Sparkles } from "lucide-react";
 
 type TimerMode = "focus" | "shortBreak" | "longBreak";
 
-const MODE_CONFIG: Record<TimerMode, { label: string; minutes: number; color: string; gradient: string; emoji: string }> = {
-  focus:      { label: "Focus",       minutes: 25, color: "#8b5cf6", gradient: "from-brand-500 to-brand-700", emoji: "🎯" },
-  shortBreak: { label: "Short Break", minutes: 5,  color: "#10b981", gradient: "from-accent-500 to-accent-700", emoji: "☕" },
-  longBreak:  { label: "Long Break",  minutes: 15, color: "#06b6d4", gradient: "from-cyan-500 to-cyan-700",    emoji: "🧘" },
+const MODE_CONFIG: Record<
+  TimerMode,
+  { label: string; minutes: number; color: string; gradient: string; emoji: string }
+> = {
+  focus: {
+    label: "Focus",
+    minutes: 25,
+    color: "#4F6AF6",
+    gradient: "from-brand-500 to-cyan-500",
+    emoji: "🎯",
+  },
+  shortBreak: {
+    label: "Short Break",
+    minutes: 5,
+    color: "#10b981",
+    gradient: "from-emerald-500 to-teal-500",
+    emoji: "☕",
+  },
+  longBreak: {
+    label: "Long Break",
+    minutes: 15,
+    color: "#06b6d4",
+    gradient: "from-cyan-500 to-blue-500",
+    emoji: "🧘",
+  },
 };
 
 export default function TimerPage() {
@@ -17,7 +39,6 @@ export default function TimerPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [sessionsCompleted, setSessions] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const config = MODE_CONFIG[mode];
   const totalSeconds = config.minutes * 60;
@@ -25,14 +46,12 @@ export default function TimerPage() {
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
 
-  // Clean up on unmount
   useEffect(() => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, []);
 
-  // Timer tick
   useEffect(() => {
     if (isRunning && timeLeft > 0) {
       intervalRef.current = setInterval(() => {
@@ -43,19 +62,18 @@ export default function TimerPage() {
       if (mode === "focus") {
         setSessions((prev) => prev + 1);
       }
-      // Play a gentle notification sound
       try {
-        const ctx = new AudioContext();
+        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.connect(gain);
         gain.connect(ctx.destination);
-        osc.frequency.value = 800;
+        osc.frequency.value = 880;
         osc.type = "sine";
-        gain.gain.value = 0.3;
+        gain.gain.value = 0.25;
         osc.start();
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.5);
-        osc.stop(ctx.currentTime + 1.5);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
+        osc.stop(ctx.currentTime + 1.2);
       } catch {}
     }
     return () => {
@@ -76,138 +94,127 @@ export default function TimerPage() {
     setTimeLeft(totalSeconds);
   };
 
-  // SVG circle math
-  const radius = 140;
+  const radius = 130;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   return (
-    <div className="max-w-2xl mx-auto flex flex-col items-center gap-8 py-4">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-3"
-      >
-        <div className="w-11 h-11 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-xl">
-          ⏱️
+    <div className="max-w-2xl mx-auto flex flex-col items-center gap-6 py-2 pb-12">
+      {/* Top Header Card */}
+      <div className="dev-card p-4 px-6 flex items-center justify-between w-full">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-brand-50 dark:bg-brand-500/15 border border-brand-200 dark:border-brand-500/30 flex items-center justify-center text-brand-500">
+            <Timer size={16} />
+          </div>
+          <div>
+            <h1 className="text-sm font-semibold text-text-primary">Focus Pomodoro Engine</h1>
+            <p className="text-[11px] text-text-muted">
+              INTERVAL CYCLES · DEEP WORK OPTIMIZER
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-xl font-bold font-display">Focus Timer</h1>
-          <p className="text-xs text-zinc-500 dark:text-surface-200/40">
-            Pomodoro technique · Stay productive
-          </p>
+
+        <div className="flex items-center gap-1.5 text-xs font-medium text-brand-500">
+          <Sparkles size={12} />
+          <span>{sessionsCompleted} Cycles</span>
         </div>
-      </motion.div>
+      </div>
 
       {/* Mode Switcher */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.1 }}
-        className="flex gap-2 bg-zinc-100 dark:bg-surface-900/80 rounded-xl p-1.5"
-      >
-        {(Object.keys(MODE_CONFIG) as TimerMode[]).map((m) => (
-          <button
-            key={m}
-            onClick={() => switchMode(m)}
-            className={`px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
-              mode === m
-                ? "bg-white dark:bg-white/10 text-zinc-900 dark:text-white shadow-sm"
-                : "text-zinc-500 dark:text-surface-200/40 hover:text-zinc-900 dark:hover:text-surface-200/60"
-            }`}
-          >
-            {MODE_CONFIG[m].emoji} {MODE_CONFIG[m].label}
-          </button>
-        ))}
-      </motion.div>
+      <div className="flex gap-1.5 p-1 rounded-xl bg-surface-hover border border-border">
+        {(Object.keys(MODE_CONFIG) as TimerMode[]).map((m) => {
+          const isActive = mode === m;
+          return (
+            <button
+              key={m}
+              onClick={() => switchMode(m)}
+              className={`px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                isActive
+                  ? "bg-surface text-text-primary border border-border shadow-sm"
+                  : "text-text-muted hover:text-text-primary"
+              }`}
+            >
+              {MODE_CONFIG[m].emoji} {MODE_CONFIG[m].label}
+            </button>
+          );
+        })}
+      </div>
 
       {/* Timer Circle */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
-        className="relative w-[340px] h-[340px] flex items-center justify-center"
-      >
-        {/* Background glow */}
+      <div className="relative w-[320px] h-[320px] flex items-center justify-center">
+        {/* Ambient Glow */}
         <div
-          className="absolute inset-0 rounded-full blur-[60px] opacity-20 transition-colors duration-500"
+          className="absolute inset-0 rounded-full blur-[70px] opacity-10 dark:opacity-15 transition-colors duration-500 pointer-events-none"
           style={{ backgroundColor: config.color }}
         />
 
-        {/* SVG Ring */}
-        <svg
-          className="absolute inset-0 -rotate-90"
-          viewBox="0 0 320 320"
-        >
-          {/* Track */}
+        {/* SVG Circle */}
+        <svg className="absolute inset-0 -rotate-90" viewBox="0 0 320 320">
           <circle
             cx="160"
             cy="160"
             r={radius}
             fill="none"
-            className="stroke-zinc-200 dark:stroke-surface-800"
-            strokeWidth="8"
+            stroke="currentColor"
+            className="text-brand-100 dark:text-white/5"
+            strokeWidth="6"
           />
-          {/* Progress */}
           <circle
             cx="160"
             cy="160"
             r={radius}
             fill="none"
             stroke={config.color}
-            strokeWidth="8"
+            strokeWidth="6"
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
             className="transition-all duration-1000 ease-linear"
             style={{
-              filter: `drop-shadow(0 0 12px ${config.color}66)`,
+              filter: `drop-shadow(0 0 8px ${config.color}66)`,
             }}
           />
         </svg>
 
-        {/* Center content */}
+        {/* Center Numbers */}
         <div className="relative z-10 flex flex-col items-center">
           <AnimatePresence mode="wait">
             <motion.span
               key={timeLeft}
-              initial={{ opacity: 0.6, scale: 0.95 }}
+              initial={{ opacity: 0.8, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-7xl font-bold font-display tabular-nums tracking-tight"
+              className="text-6xl font-mono font-bold tracking-tighter text-text-primary tabular-nums"
             >
               {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
             </motion.span>
           </AnimatePresence>
-          <span className="text-sm text-zinc-500 dark:text-surface-200/40 mt-2">
+          <span className="text-xs font-medium text-text-muted mt-2 uppercase tracking-wider">
             {config.emoji} {config.label} Session
           </span>
         </div>
-      </motion.div>
+      </div>
 
-      {/* Controls */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="flex items-center gap-4"
-      >
+      {/* Control Buttons */}
+      <div className="flex items-center gap-3">
         <button
           onClick={resetTimer}
-          className="btn-ghost px-5 py-3 text-sm"
+          className="p-3 text-xs rounded-xl border border-border bg-surface hover:bg-surface-hover text-text-secondary hover:text-text-primary transition-all active:scale-95"
+          title="Reset timer"
         >
-          🔄 Reset
+          <RotateCcw size={15} />
         </button>
+
         <button
           onClick={toggleTimer}
-          className="relative inline-flex items-center justify-center gap-2 px-10 py-4 font-semibold text-white rounded-xl overflow-hidden transition-all duration-300 text-base"
+          className="flex items-center gap-2 px-8 py-3 text-sm font-semibold text-white rounded-xl shadow-glow transition-all active:scale-95"
           style={{
-            background: `linear-gradient(135deg, ${config.color}, ${config.color}cc)`,
-            boxShadow: isRunning ? "none" : `0 8px 30px ${config.color}55`,
+            background: `linear-gradient(135deg, ${config.color}, #06b6d4)`,
           }}
         >
-          {isRunning ? "⏸ Pause" : timeLeft === totalSeconds ? "▶ Start" : "▶ Resume"}
+          {isRunning ? <Pause size={16} /> : <Play size={16} />}
+          <span>{isRunning ? "Pause" : timeLeft === totalSeconds ? "Start Protocol" : "Resume"}</span>
         </button>
+
         <button
           onClick={() => {
             if (mode === "focus") {
@@ -216,67 +223,37 @@ export default function TimerPage() {
               switchMode("focus");
             }
           }}
-          className="btn-ghost px-5 py-3 text-sm"
+          className="p-3 text-xs rounded-xl border border-border bg-surface hover:bg-surface-hover text-text-secondary hover:text-text-primary transition-all active:scale-95"
+          title="Skip session"
         >
-          ⏭ Skip
+          <SkipForward size={15} />
         </button>
-      </motion.div>
+      </div>
 
-      {/* Session Counter */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        className="glass-card px-6 py-4 w-full max-w-md"
-      >
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium">Sessions Completed</p>
-            <p className="text-xs text-zinc-500 dark:text-surface-200/40 mt-0.5">
-              Every 4 focus sessions → long break
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            {[...Array(4)].map((_, i) => (
-              <div
-                key={i}
-                className={`w-4 h-4 rounded-full transition-all duration-300 ${
-                  i < (sessionsCompleted % 4)
-                    ? "bg-brand-500 shadow-glow scale-110"
-                    : "bg-zinc-200 dark:bg-surface-800"
-                }`}
-              />
-            ))}
-            <span className="ml-3 text-2xl font-bold font-display text-brand-400">
-              {sessionsCompleted}
-            </span>
-          </div>
+      {/* Session Progress Counter */}
+      <div className="dev-card p-4 px-5 w-full max-w-md flex items-center justify-between">
+        <div>
+          <p className="text-xs font-semibold text-text-primary">Current Focus Cadence</p>
+          <p className="text-[11px] text-text-muted">
+            4 sessions trigger 15-minute restorative interval
+          </p>
         </div>
-      </motion.div>
-
-      {/* Tips */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="glass-card p-5 w-full max-w-md"
-      >
-        <p className="text-sm font-semibold mb-2">💡 Pomodoro Tips</p>
-        <ul className="space-y-2 text-sm text-zinc-500 dark:text-surface-200/50">
-          <li className="flex items-start gap-2">
-            <span className="text-brand-400 mt-0.5">•</span>
-            Focus on a single task during each session
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-accent-400 mt-0.5">•</span>
-            Take short breaks to rest your eyes and stretch
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-cyan-400 mt-0.5">•</span>
-            After 4 sessions, take a longer 15-minute break
-          </li>
-        </ul>
-      </motion.div>
+        <div className="flex items-center gap-2">
+          {[...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className={`w-3.5 h-3.5 rounded-full transition-all duration-300 ${
+                i < (sessionsCompleted % 4)
+                  ? "bg-brand-500 shadow-glow scale-110"
+                  : "bg-brand-100 dark:bg-white/10"
+              }`}
+            />
+          ))}
+          <span className="ml-2 text-sm font-bold text-brand-500">
+            #{sessionsCompleted}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }

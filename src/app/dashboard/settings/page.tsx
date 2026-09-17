@@ -2,11 +2,8 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
+import { User, Bell, Info, Check, Save } from "lucide-react";
+import { staggerContainer, fadeUp } from "@/components/motion/motion-variants";
 
 export default function SettingsPage() {
   const [name, setName] = useState("Dilip Kumawat");
@@ -17,33 +14,38 @@ export default function SettingsPage() {
 
   const handleSave = () => {
     setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setTimeout(() => setSaved(false), 2200);
   };
 
   return (
     <motion.div
       initial="hidden"
       animate="visible"
-      variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
-      className="max-w-2xl space-y-8"
+      variants={staggerContainer}
+      className="max-w-3xl mx-auto space-y-6 pb-12"
     >
-      <motion.div variants={fadeUp}>
-        <h1 className="text-2xl font-bold font-display">Settings</h1>
-        <p className="text-sm text-surface-200/50 mt-1">Manage your account and preferences</p>
+      <motion.div variants={fadeUp} className="dev-card p-6">
+        <h1 className="text-xl md:text-2xl font-bold font-display text-text-primary">
+          System Preferences
+        </h1>
+        <p className="text-xs font-medium text-text-muted mt-1">
+          PROFILE IDENTITY · NOTIFICATION PROTOCOLS · ENGINE TELEMETRY
+        </p>
       </motion.div>
 
-      {/* ── Profile ── */}
-      <motion.div variants={fadeUp} className="glass-card p-6 space-y-5">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
-          <span>👤</span> Profile
-        </h3>
+      {/* ── Profile Configuration ── */}
+      <motion.div variants={fadeUp} className="dev-card p-6 space-y-5">
+        <div className="flex items-center gap-2">
+          <User size={16} className="text-brand-500" />
+          <h3 className="text-sm font-semibold text-text-primary">Profile Identity</h3>
+        </div>
 
         <div className="flex items-center gap-5">
-          <div className="w-16 h-16 rounded-2xl bg-brand-gradient flex items-center justify-center text-2xl font-bold">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-500 to-brand-400 flex items-center justify-center text-xl font-bold text-white shadow-sm flex-shrink-0">
             {name.charAt(0)}
           </div>
           <div className="flex-1">
-            <label className="text-xs font-medium text-surface-200/50 mb-1.5 block">
+            <label className="text-[11px] font-medium text-text-muted mb-1.5 block uppercase">
               Display Name
             </label>
             <input
@@ -55,8 +57,8 @@ export default function SettingsPage() {
         </div>
 
         <div>
-          <label className="text-xs font-medium text-surface-200/50 mb-1.5 block">
-            Email
+          <label className="text-[11px] font-medium text-text-muted mb-1.5 block uppercase">
+            Email Endpoint
           </label>
           <input
             value={email}
@@ -66,60 +68,78 @@ export default function SettingsPage() {
         </div>
       </motion.div>
 
-      {/* ── Notifications ── */}
-      <motion.div variants={fadeUp} className="glass-card p-6 space-y-5">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
-          <span>🔔</span> Notifications
-        </h3>
+      {/* ── Notifications Configuration ── */}
+      <motion.div variants={fadeUp} className="dev-card p-6 space-y-5">
+        <div className="flex items-center gap-2">
+          <Bell size={16} className="text-brand-500" />
+          <h3 className="text-sm font-semibold text-text-primary">Notification Triggers</h3>
+        </div>
 
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium">Push Notifications</p>
-            <p className="text-xs text-surface-200/40">Get reminded about your habits</p>
+            <p className="text-xs font-semibold text-text-primary">Push Notifications</p>
+            <p className="text-[11px] text-text-muted">
+              Dispatch streak warnings before midnight deadline
+            </p>
           </div>
           <button
             onClick={() => setNotifications(!notifications)}
-            className={`w-12 h-7 rounded-full transition-all duration-300 ${
-              notifications ? "bg-brand-600" : "bg-surface-700"
+            className={`w-11 h-6 rounded-full transition-all duration-200 relative p-0.5 ${
+              notifications ? "bg-brand-500" : "bg-surface-active"
             }`}
+            aria-label="Toggle notifications"
           >
             <div
-              className={`w-5 h-5 bg-white rounded-full shadow-md transition-all duration-300 ${
-                notifications ? "ml-6" : "ml-1"
+              className={`w-5 h-5 bg-white rounded-full shadow-sm transition-all duration-200 ${
+                notifications ? "ml-5" : "ml-0"
               }`}
             />
           </button>
         </div>
 
         <div>
-          <label className="text-xs font-medium text-surface-200/50 mb-1.5 block">
-            Daily Reminder Time
+          <label className="text-[11px] font-medium text-text-muted mb-1.5 block uppercase">
+            Daily Reminder Interval (Local Time)
           </label>
           <input
             type="time"
             value={dailyReminder}
             onChange={(e) => setDailyReminder(e.target.value)}
-            className="input-field max-w-[200px]"
+            className="input-field max-w-[160px] text-xs"
           />
         </div>
       </motion.div>
 
-      {/* ── App Info ── */}
-      <motion.div variants={fadeUp} className="glass-card p-6 space-y-3">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
-          <span>ℹ️</span> About
-        </h3>
-        <div className="text-sm text-surface-200/50 space-y-1">
-          <p>GrowthMind v0.1.0</p>
-          <p>Built by Dilip Kumawat</p>
-          <p>Next.js 14 · TailwindCSS · Framer Motion</p>
+      {/* ── Telemetry & System Info ── */}
+      <motion.div variants={fadeUp} className="dev-card p-6 space-y-3">
+        <div className="flex items-center gap-2">
+          <Info size={16} className="text-cyan-500" />
+          <h3 className="text-sm font-semibold text-text-primary">Architecture & Build</h3>
+        </div>
+        <div className="text-xs text-text-muted space-y-1">
+          <p>GrowthMind Engine: v2.0-developer-edition</p>
+          <p>Created by Dilip Kumawat</p>
+          <p>Stack: Next.js 14 · Framer Motion 11 · TailwindCSS · MongoDB / NextAuth</p>
         </div>
       </motion.div>
 
       {/* Save Button */}
       <motion.div variants={fadeUp}>
-        <button onClick={handleSave} className="btn-primary text-sm px-8 py-3">
-          {saved ? "✓ Saved!" : "Save Changes"}
+        <button
+          onClick={handleSave}
+          className="btn-primary text-xs font-medium px-6 py-3"
+        >
+          {saved ? (
+            <>
+              <Check size={14} />
+              <span>✓ Preferences Saved</span>
+            </>
+          ) : (
+            <>
+              <Save size={14} />
+              <span>Save System Changes</span>
+            </>
+          )}
         </button>
       </motion.div>
     </motion.div>
