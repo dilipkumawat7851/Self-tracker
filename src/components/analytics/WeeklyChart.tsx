@@ -2,58 +2,69 @@
 
 import { motion } from "framer-motion";
 import type { WeeklyStat } from "@/lib/types";
+import { BarChart3 } from "lucide-react";
 
 interface WeeklyChartProps {
   data: WeeklyStat[];
 }
 
 export default function WeeklyChart({ data }: WeeklyChartProps) {
-  const maxVal = Math.max(...data.map((d) => d.total));
+  const maxVal = Math.max(...data.map((d) => d.total), 1);
 
   return (
-    <div className="glass-card p-6">
+    <div className="dev-card p-5 md:p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="section-title">Weekly Overview</h3>
-          <p className="section-subtitle mt-0.5">Habits completed this week</p>
+          <div className="flex items-center gap-2">
+            <BarChart3 size={16} className="text-brand-500" />
+            <h3 className="section-title text-sm">Weekly Protocol Completion</h3>
+          </div>
+          <p className="text-xs text-text-muted mt-0.5">
+            Total habits completed per day this cycle
+          </p>
         </div>
-        <span className="badge-accent">This Week</span>
+        <span className="badge text-[10px] text-cyan-600 dark:text-cyan-300 border-cyan-200 dark:border-cyan-500/30 bg-cyan-50 dark:bg-cyan-500/10">
+          CYCLE METRICS
+        </span>
       </div>
 
-      <div className="flex items-end gap-3 h-40">
+      <div className="flex items-end gap-2 sm:gap-4 h-44 pt-2">
         {data.map((day, i) => {
           const heightPct = maxVal > 0 ? (day.completed / maxVal) * 100 : 0;
           const bgHeightPct = maxVal > 0 ? (day.total / maxVal) * 100 : 0;
-          const isToday = i === new Date().getDay() - 1;
+          const isToday = i === (new Date().getDay() + 6) % 7; // Monday = 0
 
           return (
-            <div key={day.day} className="flex-1 flex flex-col items-center gap-2">
-              <span className="text-xs font-medium text-surface-200/50">
+            <div key={day.day} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+              <span className="text-[10px] font-medium text-text-muted group-hover:text-text-primary transition-colors">
                 {day.completed}/{day.total}
               </span>
-              <div className="relative w-full max-w-[36px] mx-auto" style={{ height: "100%" }}>
-                {/* Background bar */}
+
+              <div className="relative w-full max-w-[34px] h-32 rounded-lg bg-surface-hover border border-border overflow-hidden flex items-end">
+                {/* Background ghost track */}
                 <div
-                  className="absolute bottom-0 w-full rounded-lg bg-white/[0.03]"
+                  className="w-full bg-black/[0.03] dark:bg-white/[0.04]"
                   style={{ height: `${bgHeightPct}%` }}
                 />
-                {/* Filled bar */}
+
+                {/* Animated active bar */}
                 <motion.div
-                  className="absolute bottom-0 w-full rounded-lg"
+                  className="absolute bottom-0 w-full rounded-md"
                   style={{
                     background: isToday
-                      ? "linear-gradient(to top, #8b5cf6, #a78bfa)"
-                      : "linear-gradient(to top, rgba(139,92,246,0.5), rgba(167,139,250,0.5))",
-                    boxShadow: isToday ? "0 0 12px rgba(139,92,246,0.3)" : "none",
+                      ? "linear-gradient(to top, #4F6AF6, #6580FF)"
+                      : "linear-gradient(to top, rgba(79,106,246,0.5), rgba(101,128,255,0.5))",
+                    boxShadow: isToday ? "0 0 12px rgba(79,106,246,0.25)" : "none",
                   }}
                   initial={{ height: 0 }}
                   animate={{ height: `${heightPct}%` }}
-                  transition={{ duration: 0.6, delay: i * 0.08, ease: "easeOut" }}
+                  transition={{ duration: 0.6, delay: i * 0.06, ease: "easeOut" }}
                 />
               </div>
+
               <span
-                className={`text-xs font-medium ${
-                  isToday ? "text-brand-400" : "text-surface-200/40"
+                className={`text-[11px] font-medium ${
+                  isToday ? "text-brand-500 font-bold" : "text-text-muted"
                 }`}
               >
                 {day.day}

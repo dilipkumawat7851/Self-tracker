@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Flame, Star, Zap } from "lucide-react";
+import { Flame, Star, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
 
 interface MotivationBannerProps {
   pendingHabitsCount: number;
@@ -9,22 +10,35 @@ interface MotivationBannerProps {
 }
 
 export default function MotivationBanner({ pendingHabitsCount, userName }: MotivationBannerProps) {
-  // Simple check for how many habits are left to do today
   if (pendingHabitsCount === 0) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-accent-500/20 to-brand-500/10 border border-accent-500/20 mb-6"
+        className="dev-card p-4 sm:p-5 flex items-center justify-between gap-4 border border-emerald-200 dark:border-emerald-500/25 bg-emerald-50 dark:bg-emerald-500/5"
       >
-        <div className="p-3 bg-accent-500 rounded-xl text-white shadow-lg shadow-accent-500/30">
-          <Star size={24} fill="currentColor" />
+        <div className="flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+            <CheckCircle2 size={20} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold text-sm text-text-primary">
+                All daily protocols completed, {userName}!
+              </h3>
+              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30">
+                100% SCORE
+              </span>
+            </div>
+            <p className="text-xs text-text-secondary mt-0.5">
+              Streak protected for today. Great focus—take time to recharge!
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className="font-bold text-surface-900 dark:text-white">Perfect Day, {userName}! 🎉</h3>
-          <p className="text-sm text-surface-600 dark:text-surface-300">
-            You've completed all your habits for today. Take a moment to relax—you earned it!
-          </p>
+
+        <div className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-500/20 bg-emerald-100 dark:bg-emerald-500/10">
+          <Star size={13} className="fill-emerald-500/40" />
+          <span>+50 XP Bonus</span>
         </div>
       </motion.div>
     );
@@ -32,22 +46,35 @@ export default function MotivationBanner({ pendingHabitsCount, userName }: Motiv
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -10 }}
+      initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 to-orange-500/5 border border-amber-500/20 mb-6"
+      className="dev-card p-4 sm:p-5 flex items-center justify-between gap-4 border border-orange-200 dark:border-orange-500/25 bg-orange-50 dark:bg-orange-500/5"
     >
-      <div className="p-3 bg-amber-500 rounded-xl text-white shadow-lg shadow-amber-500/30">
-        <Flame size={24} fill="currentColor" />
+      <div className="flex items-center gap-3.5">
+        <div className="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-500/20 border border-orange-200 dark:border-orange-500/30 flex items-center justify-center text-orange-600 dark:text-orange-400 flex-shrink-0">
+          <Flame size={20} className="fill-orange-400/40" />
+        </div>
+        <div>
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold text-sm text-text-primary">
+              Maintain Streak Momentum, {userName}
+            </h3>
+            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-orange-100 dark:bg-orange-500/15 text-orange-600 dark:text-orange-300 border border-orange-200 dark:border-orange-500/30">
+              {pendingHabitsCount} PENDING
+            </span>
+          </div>
+          <p className="text-xs text-text-secondary mt-0.5">
+            You have <span className="text-orange-600 dark:text-orange-400 font-medium">{pendingHabitsCount}</span> pending habit{pendingHabitsCount > 1 ? "s" : ""} left today. Complete them before midnight to maintain your active streak.
+          </p>
+        </div>
       </div>
-      <div>
-        <h3 className="font-bold text-surface-900 dark:text-white">Keep the fire burning! 🔥</h3>
-        <p className="text-sm text-surface-600 dark:text-surface-300">
-          Hey {userName}, you still have <span className="font-bold text-amber-600 dark:text-amber-400">{pendingHabitsCount}</span> task{pendingHabitsCount > 1 ? 's' : ''} left today. Complete them now to protect your streak!
-        </p>
-      </div>
-      <button className="ml-auto px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-lg shadow-md transition-colors hidden sm:block">
-        Do it now!
-      </button>
+
+      <Link
+        href="/dashboard/habits"
+        className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-xl border border-orange-200 dark:border-orange-500/30 bg-orange-100 dark:bg-orange-500/15 hover:bg-orange-200 dark:hover:bg-orange-500/25 text-orange-600 dark:text-orange-300 transition-all active:scale-95 flex-shrink-0"
+      >
+        <span>Execute Now →</span>
+      </Link>
     </motion.div>
   );
 }

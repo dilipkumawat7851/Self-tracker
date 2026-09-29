@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState, useRef, useEffect, FormEvent } from "react";
+import { Bot, Send, Sparkles, Terminal } from "lucide-react";
 
 interface ChatMessage {
   id: string;
@@ -22,7 +23,7 @@ export default function CoachPage() {
       id: "1",
       role: "assistant",
       content:
-        "Hey! 👋 I'm your AI habit coach. I'm here to analyze your streaks, provide motivation, and help you build a better routine. What would you like to focus on today?",
+        "GrowthMind AI Coach initialized. 👋 I am here to analyze your consistency vectors, identify friction points, and engineer a high-performance routine. What protocol shall we evaluate today?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -99,7 +100,7 @@ export default function CoachPage() {
           id: (Date.now() + 2).toString(),
           role: "assistant",
           content:
-            "Sorry, I'm having trouble connecting right now. Please try again! 🔄",
+            "Connection interrupted. Please verify your network or API status and retry! 🔄",
         },
       ]);
     } finally {
@@ -113,41 +114,54 @@ export default function CoachPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto flex flex-col h-[calc(100vh-130px)]">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-11 h-11 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-xl">
-          🤖
+    <div className="max-w-4xl mx-auto flex flex-col h-[calc(100vh-125px)] pb-4">
+      {/* Terminal Header */}
+      <div className="dev-card p-4 flex items-center justify-between gap-3 mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-brand-50 dark:bg-brand-500/15 border border-brand-200 dark:border-brand-500/30 flex items-center justify-center text-brand-500">
+            <Bot size={18} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-sm font-semibold font-display text-text-primary">
+                AI Coach Terminal
+              </h1>
+              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/25">
+                ACTIVE STREAM
+              </span>
+            </div>
+            <p className="text-[11px] text-text-muted">
+              MODEL: LLM · STREAMING INTERFACE · HABIT INTELLIGENCE
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-xl font-bold font-display">AI Coach</h1>
-          <p className="text-xs text-surface-200/40">
-            Powered by AI · Personalized insights
-          </p>
+
+        <div className="hidden sm:flex items-center gap-2 text-xs text-text-muted">
+          <Terminal size={14} />
+          <span>PORT: 3000</span>
         </div>
-        <span className="ml-auto badge-accent text-xs">Online</span>
       </div>
 
-      {/* Messages */}
+      {/* Messages Scroll Area */}
       <div
-        className="flex-1 overflow-y-auto space-y-4 pr-2"
         ref={scrollRef}
+        className="flex-1 overflow-y-auto space-y-3.5 pr-2 select-text"
       >
-        {messages.map((msg, i) => (
+        {messages.map((msg) => (
           <motion.div
             key={msg.id}
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05, duration: 0.3 }}
+            transition={{ duration: 0.25 }}
             className={`flex ${
               msg.role === "user" ? "justify-end" : "justify-start"
             }`}
           >
             <div
-              className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed whitespace-pre-line ${
+              className={`max-w-[85%] p-4 rounded-2xl text-xs sm:text-sm leading-relaxed whitespace-pre-line border ${
                 msg.role === "user"
-                  ? "bg-brand-600/30 border border-brand-500/20 rounded-tr-sm"
-                  : "glass-card rounded-tl-sm"
+                  ? "bg-brand-50 dark:bg-brand-500/20 border-brand-200 dark:border-brand-500/35 text-text-primary rounded-tr-sm"
+                  : "bg-surface border-border text-text-primary rounded-tl-sm shadow-card"
               }`}
             >
               {msg.content}
@@ -161,11 +175,11 @@ export default function CoachPage() {
             animate={{ opacity: 1 }}
             className="flex justify-start"
           >
-            <div className="glass-card px-5 py-3 rounded-2xl rounded-tl-sm">
-              <div className="flex gap-1.5">
-                <span className="w-2 h-2 bg-brand-400 rounded-full animate-bounce" />
-                <span className="w-2 h-2 bg-brand-400 rounded-full animate-bounce [animation-delay:0.15s]" />
-                <span className="w-2 h-2 bg-brand-400 rounded-full animate-bounce [animation-delay:0.3s]" />
+            <div className="dev-card px-4 py-3 rounded-2xl rounded-tl-sm">
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-bounce" />
+                <span className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-bounce [animation-delay:0.15s]" />
+                <span className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-bounce [animation-delay:0.3s]" />
               </div>
             </div>
           </motion.div>
@@ -173,33 +187,34 @@ export default function CoachPage() {
       </div>
 
       {/* Quick Prompts */}
-      <div className="flex flex-wrap gap-2 mt-4 mb-3">
+      <div className="flex flex-wrap gap-2 mt-3 mb-2.5">
         {quickPrompts.map((prompt) => (
           <button
             key={prompt}
             onClick={() => sendMessage(prompt)}
             disabled={isLoading}
-            className="text-xs px-3.5 py-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] text-surface-200/60 hover:bg-white/[0.06] hover:text-white transition-all disabled:opacity-40"
+            className="text-xs font-medium px-3 py-1 rounded-full border border-border bg-surface hover:bg-surface-hover hover:border-brand-300 dark:hover:border-brand-500/30 text-text-secondary hover:text-text-primary transition-all disabled:opacity-40"
           >
-            {prompt}
+            + {prompt}
           </button>
         ))}
       </div>
 
-      {/* Input */}
-      <form onSubmit={handleSubmit} className="flex gap-3">
+      {/* Input Field */}
+      <form onSubmit={handleSubmit} className="flex gap-2.5">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask your AI coach anything..."
-          className="input-field flex-1"
+          placeholder="Ask coach for habit strategies, streak diagnostics, or routine upgrades..."
+          className="input-field flex-1 font-sans text-xs sm:text-sm"
         />
         <button
           type="submit"
           disabled={isLoading || !input.trim()}
-          className="btn-primary px-5"
+          className="btn-primary px-5 text-xs font-medium"
         >
-          Send
+          <Send size={14} />
+          <span className="hidden sm:inline">Send</span>
         </button>
       </form>
     </div>
